@@ -53,6 +53,12 @@
   <!-- Page Content -->
   <div class="container">
 
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">Home</li>
+      </ol>
+    </nav>
+
     <div class="row">
 
       <!-- Blog Entries Column -->
@@ -61,6 +67,7 @@
         <h1 class="my-4">Page Heading
           <small>Secondary Text</small>
         </h1>
+        
 
         <!-- Blog Post -->
         
@@ -68,7 +75,11 @@
 
 
         <div class="card mb-4">
-          <img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">
+          <% if (post.image){ %>
+            <img class="card-img-top" src="<%= post.image %>" alt="Card image cap">
+          <% } else { %>
+            <img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">
+          <% } %>
           <div class="card-body">
             <h2 class="card-title">
               <%= post.title %>
