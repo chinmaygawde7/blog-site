@@ -68,7 +68,7 @@
                             Dashboard
                         </a>
 
-                        <a class="nav-link active" href="/admin/posts">
+                        <a class="nav-link" href="/admin/posts">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                             Post
                         </a>
@@ -85,14 +85,13 @@
             </nav>
         </div>
 
-
         <div class="container-fluid col-md-12 mb-5" style="padding-top: 100px;">
-            <form method="POST" onsubmit="return doPost(this);" class="offset-md-2 col-md-9"
+            <form method="POST" onsubmit="return doEditPost(this);" class="offset-md-2 col-md-9"
                 style="border-style: inset;">
                 <div class="form-group">
                     <h3>Title</h3>
                     <br>
-                    <input name="title" class="form-control" placeholder="Title" />
+                    <input name="title" class="form-control" placeholder="Title" value="<%= post.title %>" />
                 </div>
                 <br>
 
@@ -102,105 +101,99 @@
                 </button>
                 <br>
 
+
                 <div class="form-group">
                     <h3>Content</h3>
                     <br>
                     <textarea rows="20" cols="50" name="content" class="form-control"
-                        placeholder="Type something ..."></textarea>
+                        placeholder="Title"><%= post.content %></textarea>
                 </div>
                 <br>
 
                 <div class="form-group">
                     <h3>Author</h3>
                     <br>
-                    <input name="author" class="form-control" placeholder="Author" />
+                    <input name="author" class="form-control" placeholder="Author" value="<%= post.author %>" />
                 </div>
                 <br>
 
-                <input type="submit" class="btn btn-info btn-sm btn-block col-1 col-md-1" value="Post">
+                <input type="submit" class="btn btn-warning btn-sm btn-block col-1 col-md-1" value="Edit">
                 <br>
 
             </form>
         </div>
 
-    </div>
+        <div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalLabel">
+                            Upload Image
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="form-upload">
+
+                            <input type="hidden" name="image" value="<%= post.image %>">
 
 
-
-
-
-
-
-    <script>
-
-
-        function doPost(form) {
-
-            var formData = { title: form.title.value, content: form.content.value, image: imgPath, author: form.author.value };
-
-            $.ajax({
-                url: "/do-post",
-                method: "POST",
-                data: formData,
-                success: function (response) {
-                    alert(response.text);
-
-                    formData._id = response._id;
-
-                    var socket = io();
-
-                    socket.emit("new_post", formData);
-                }
-            });
-            return false;
-        }
-    </script>
-
-    <div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="exampleModalLabel">
-                        Upload Image
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-
-                </div>
-                <div class="modal-body">
-                    <form method="POST" enctype="multipart/form-data" id="form-upload">
-                        <div class="form-group">
-                            <input type="file" name="file" class="form-control">
-                        </div>
-                        <input type="submit" class="btn btn-success" value="Upload">
-                    </form>
+                            <div class="form-group">
+                                <input type="file" name="file" class="form-control">
+                            </div>
+                            <input type="submit" class="btn btn-success" value="Upload">
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        var imgPath = "";
-        $("#form-upload").on("submit", function (e) {
-            e.preventDefault();
-            $.ajax({
-                url: "/do-upload-image",
-                method: "POST",
-                data: new FormData(this),
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function (response) {
-                    imgPath = response;
-                    $("#imgModal").modal('hide');
-                }
+        <script>
 
-            })
-        })
-    </script>
+            var postId = '<%= post._id %>';
+            var image = '<%= post.image %>';
 
-</body>
+            function doEditPost(form) {
 
-</html>
+                var formData = {
+                    title: form.title.value,
+                    content: form.content.value,
+                    author: form.author.value,
+                    _id: postId,
+                    image: image,
+                };
+
+                $.ajax({
+                    url: "/do-edit-post",
+                    method: "POST",
+                    data: formData,
+                    success: function (response) {
+                        alert(response);
+
+                    }
+                });
+                return false;
+            }
+
+            $("#form-upload").on("submit", function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "/do-update-image",
+                    method: "POST",
+                    data: new FormData(this),
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (response) {
+                        image = response;
+                        $("#imgModal").modal('hide');
+                    }
+
+                });
+            });
+
+        </script>

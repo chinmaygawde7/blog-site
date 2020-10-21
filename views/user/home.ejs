@@ -18,6 +18,10 @@
   <!-- Custom styles for this template -->
   <link href="static/user/css/blog-home.css" rel="stylesheet">
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"
+    integrity="sha512-AcZyhRP/tbAEsXCCGlziPun5iFvcSUpEz2jKkx0blkYKbxU81F+iq8FURwPn1sYFeksJ+sDDrI5XujsqSobWdQ=="
+    crossorigin="anonymous"></script>
+
 </head>
 
 <body>
@@ -25,28 +29,11 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="#">Start Bootstrap</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="#">Blogger</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
-          </li>
-        </ul>
-      </div>
     </div>
   </nav>
 
@@ -64,43 +51,47 @@
       <!-- Blog Entries Column -->
       <div class="col-md-8">
 
-        <h1 class="my-4">Page Heading
-          <small>Secondary Text</small>
+        <h1 class="my-4">Recent Blogs
+
         </h1>
-        
+
 
         <!-- Blog Post -->
-        
-        <% posts.forEach(function (post) { %>
+
+        <div id="posts">
+          <% posts.forEach(function (post) { %>
 
 
-        <div class="card mb-4">
-          <% if (post.image){ %>
+          <div class="card mb-4" id="post-<%= post._id %>">
+            <% if (post.image){ %>
             <img class="card-img-top" src="<%= post.image %>" alt="Card image cap">
-          <% } else { %>
+            <% } else { %>
             <img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">
-          <% } %>
-          <div class="card-body">
-            <h2 class="card-title">
-              <%= post.title %>
-            </h2>
-            <p class="card-text">
-              <%= post.content %>
-            </p>
-            <a href="posts/<%= post._id %>" class="btn btn-primary">Read More &rarr;</a>
+            <% } %>
+            <div class="card-body">
+              <h2 class="card-title">
+                <%= post.title %>
+              </h2>
+              <p class="card-text">
+                <%= post.content %>
+              </p>
+              <a href="posts/<%= post._id %>" class="btn btn-primary">Read More &rarr;</a>
+            </div>
           </div>
-        </div>
 
-        <% }) %>
+          <% }) %>
+
+        </div>
 
 
         <!-- Pagination -->
         <ul class="pagination justify-content-center mb-4">
           <li class="page-item">
-            <a class="page-link" href="#">&larr; Older</a>
+            <button class="btn btn-secondary" type="button" onclick=getNew()>&larr; Newer </button>
           </li>
+          &nbsp;
           <li class="page-item disabled">
-            <a class="page-link" href="#">Newer &rarr;</a>
+            <button class="btn btn-secondary" type="button" onclick=getOld()>Older &rarr;</button>
           </li>
         </ul>
 
@@ -123,47 +114,9 @@
         </div>
 
         <!-- Categories Widget -->
-        <div class="card my-4">
-          <h5 class="card-header">Categories</h5>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-lg-6">
-                <ul class="list-unstyled mb-0">
-                  <li>
-                    <a href="#">Web Design</a>
-                  </li>
-                  <li>
-                    <a href="#">HTML</a>
-                  </li>
-                  <li>
-                    <a href="#">Freebies</a>
-                  </li>
-                </ul>
-              </div>
-              <div class="col-lg-6">
-                <ul class="list-unstyled mb-0">
-                  <li>
-                    <a href="#">JavaScript</a>
-                  </li>
-                  <li>
-                    <a href="#">CSS</a>
-                  </li>
-                  <li>
-                    <a href="#">Tutorials</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         <!-- Side Widget -->
-        <div class="card my-4">
-          <h5 class="card-header">Side Widget</h5>
-          <div class="card-body">
-            You can put anything you want inside of these side widgets. They are easy to use, and feature the new Bootstrap 4 card containers!
-          </div>
-        </div>
 
       </div>
 
@@ -173,13 +126,106 @@
   </div>
   <!-- /.container -->
 
-  <!-- Footer -->
-  <footer class="py-5 bg-dark">
-    <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
-    </div>
-    <!-- /.container -->
-  </footer>
+  <script>
+
+    var start = 0;
+    var limit = <%= postLimit %>;
+
+    function getOld() {
+
+      start = start + limit;
+
+      $.ajax({
+        url: "/get-posts/" + start + "/" + limit,
+        method: "GET",
+        success: function (response) {
+          console.log(response);
+
+          renderPosts(response);
+        }
+
+      });
+    }
+
+    function getNew() {
+
+      start = start - limit;
+
+      $.ajax({
+        url: "/get-posts/" + start + "/" + limit,
+        method: "GET",
+        success: function (response) {
+          console.log(response);
+
+          renderPosts(response);
+        }
+
+      });
+    }
+
+    function renderPosts(posts) {
+      if (posts.length > 0) {
+        var html = "";
+
+        for (var a = 0; a < posts.length; a++) {
+
+          html += '<div class="card mb-4" id="post-' + posts[a]._id + '">';
+
+          html += '<img class="card-img-top" src="' + posts[a].image + '" alt="Card image cap">';
+
+          html += '<img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">';
+
+          html += '<div class="card-body">';
+          html += '<h2 class="card-title">';
+          html += posts[a].title;
+          html += '</h2>';
+          html += '<p class="card-text">';
+          html += posts[a].content;
+          html += '</p>';
+          html += '<a href="posts/' + posts[a]._id + '" class="btn btn-primary">Read More &rarr;</a>';
+          html += '</div>';
+          html += '</div>';
+
+          $("#posts").html(html);
+
+        }
+      }
+    }
+
+    var socket = io();
+
+
+
+    socket.on("new_post", function (formData) {
+      var html = "";
+      html += '<div class="card mb-4">';
+
+      html += '<img class="card-img-top" src="' + formData.image + '" alt="Card image cap">';
+
+      html += '<img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">';
+
+      html += '<div class="card-body">';
+      html += '<h2 class="card-title">';
+      html += formData.title;
+      html += '</h2>';
+      html += '<p class="card-text">';
+      html += formData.content;
+      html += '</p>';
+      html += '<a href="posts/' + formData._id + '" class="btn btn-primary">Read More &rarr;</a>';
+      html += '</div>';
+      html += '</div>';
+      $("#posts").prepend(html);
+
+
+    });
+
+    socket.on("delete_post", function (replyId) {
+      location.reload();
+      document.getElementById("#post-" + replyId).remove();
+    });
+
+  </script>
+
 
   <!-- Bootstrap core JavaScript -->
   <script src="node_modules/ejs/ejs.js"></script>
