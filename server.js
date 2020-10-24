@@ -63,15 +63,6 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true },
             });
         });
 
-        app.get("/get-posts/:start/:limit", function (req, res) {
-            blog.collection("posts").find().sort({
-                "_id": -1
-            }).skip(parseInt(req.params.start)).limit(parseInt(req.params.limit)).toArray(
-                function (error, posts) {
-                    res.send(posts);
-                }
-            );
-        });
 
         app.get("/posts/:id", function (req, res) {
             blog.collection("posts").findOne({ "_id": ObjectID(req.params.id) }, function (error, post) {
