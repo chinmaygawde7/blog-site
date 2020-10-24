@@ -50,13 +50,13 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true },
 
             blog.collection("settings").findOne({}, function (error, settings) {
 
-                var postLimit = parseInt(settings.post_limit);
+                
 
-                blog.collection("posts").find().sort({ "_id": -1 }).limit(postLimit).toArray(function (error, posts) {
+                blog.collection("posts").find().sort({ "_id": -1 }).limit(2).toArray(function (error, posts) {
 
                     res.render("user/home", {
                         posts: posts,
-                        "postLimit": postLimit
+                        "postLimit": 2
                     });
                 });
 
