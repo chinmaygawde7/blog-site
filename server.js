@@ -227,8 +227,8 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true },
                 var transporter = nodemailer.createTransport({
                     "service": "gmail",
                     "auth": {
-                        "user": "chinu.gawde007@gmail.com",
-                        "pass": "deathstroke007"
+                        "user": "",
+                        "pass": ""
                     }
                 });
 
