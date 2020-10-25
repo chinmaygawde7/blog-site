@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/chinmaygawde7/blog-site#readme",
   "dependencies": {
+    "consolidate": "^0.16.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1",

@@ -2,6 +2,7 @@ var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 const { ObjectID, ObjectId } = require("mongodb");
+var engine = require("consolidate");
 
 var http = require("http").createServer(app);
 var io = require("socket.io")(http);
@@ -65,7 +66,9 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true },
 
 
         app.get("/zohoverify/verifyforzoho.html", function(req,res){
-            res.render("../zohoverify/verifyforzoho");
+            app.engine('html', engine.mustache);
+            app.set('view engine', 'html');
+            res.render("../zohoverify/verifyforzoho.html");
         });
 
 
