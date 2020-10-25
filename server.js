@@ -63,11 +63,9 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true },
             });
         });
 
-        app.get("/.well-known/pki-validation/8F47679E3535BD094F4B2D36FE1D2120.txt", function(res,req){
-            fs.readFile(".well-known/pki-validation/8F47679E3535BD094F4B2D36FE1D2120.txt", function(e, data){
-                if(e) throw e;
-                console.log(data);
-            });
+
+        app.get("/zohoverify/verifyforzoho.html", function(req,res){
+            res.render("../zohoverify/verifyforzoho");
         });
 
 
