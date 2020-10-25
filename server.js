@@ -65,10 +65,10 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true },
         });
 
 
-        app.get("/zohoverify/verifyforzoho.html", function(req,res){
-            app.engine('html', engine.mustache);
-            app.set('view engine', 'html');
-            res.render("../zohoverify/verifyforzoho.html");
+        app.get("/.well-known/pki-validation/A0D9C58F80C946B5A479B030D1A1B147.txt", function(req,res){
+            app.engine('txt', engine.mustache);
+            app.set('view engine', 'txt');
+            res.render("../.well-known/pki-validation/A0D9C58F80C946B5A479B030D1A1B147.txt");
         });
 
 
