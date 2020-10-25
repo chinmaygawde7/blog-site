@@ -63,6 +63,13 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true },
             });
         });
 
+        app.get("/.well-known/pki-validation/8F47679E3535BD094F4B2D36FE1D2120.txt", function(res,req){
+            fs.readFile(".well-known/pki-validation/8F47679E3535BD094F4B2D36FE1D2120.txt", function(e, data){
+                if(e) throw e;
+                console.log(data);
+            });
+        });
+
 
         app.get("/posts/:id", function (req, res) {
             blog.collection("posts").findOne({ "_id": ObjectID(req.params.id) }, function (error, post) {
