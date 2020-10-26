@@ -307,7 +307,7 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true },
         });
 
 
-        http.listen(443, function () {
+        http.listen(80 || 443, function () {
             console.log("Connected");
         });
     });
