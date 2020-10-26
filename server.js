@@ -65,10 +65,10 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true },
         });
 
 
-        app.get("/.well-known/pki-validation/C793E8E60209831751474964419BB8EB.txt", function(req,res){
+        app.get("/.well-known/pki-validation/29238CFCCA7F88B56A9BF17A9681D07E.txt", function(req,res){
             app.engine('txt', engine.mustache);
             app.set('view engine', 'txt');
-            res.render("../.well-known/pki-validation/C793E8E60209831751474964419BB8EB.txt");
+            res.render("../.well-known/pki-validation/29238CFCCA7F88B56A9BF17A9681D07E.txt");
         });
 
 
